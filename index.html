@@ -216,6 +216,51 @@ footer{padding-block:28px;color:var(--muted);font-size:14px}
   .ad-kpis{grid-template-columns:1fr 1fr}
 }
 @media (prefers-reduced-motion:no-preference){.cta,.add,.d4 .dish button{transition:transform .15s,background .15s}.cta:hover{transform:translateY(-1px)}.d4 .dish button:active{transform:scale(.9)}}
+
+/* ---- Animaciones ---- */
+:root{--aurora-a:rgba(31,91,255,.20);--aurora-b:rgba(0,190,160,.16);--aurora-c:rgba(140,90,255,.14)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--aurora-a:rgba(110,149,255,.22);--aurora-b:rgba(0,200,170,.14);--aurora-c:rgba(160,110,255,.16)}}
+:root[data-theme="dark"]{--aurora-a:rgba(110,149,255,.22);--aurora-b:rgba(0,200,170,.14);--aurora-c:rgba(160,110,255,.16)}
+.hero{position:relative;isolation:isolate}
+.aurora{position:absolute;inset:-40px 0 0;z-index:-1;pointer-events:none;overflow:hidden;filter:blur(40px)}
+.aurora span{position:absolute;border-radius:50%;width:46%;height:70%;opacity:.9}
+.aurora span:nth-child(1){background:radial-gradient(closest-side,var(--aurora-a),transparent);left:38%;top:-10%}
+.aurora span:nth-child(2){background:radial-gradient(closest-side,var(--aurora-b),transparent);left:58%;top:20%}
+.aurora span:nth-child(3){background:radial-gradient(closest-side,var(--aurora-c),transparent);left:18%;top:30%}
+.hero h1 em{background:linear-gradient(var(--accent),var(--accent)) left 92%/0% .09em no-repeat;padding-bottom:.04em}
+.logo i{box-shadow:0 0 0 0 var(--accent)}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#8FE3B0;margin-top:auto;padding:7px 9px}
+.live::before{content:"";width:7px;height:7px;border-radius:50%;background:#3DDC84}
+.browser{transition:transform .35s cubic-bezier(.2,.7,.2,1),box-shadow .35s}
+.reveal.pre{opacity:0;transform:translateY(28px)}
+.reveal{transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+@media (prefers-reduced-motion:no-preference){
+  .hero > :not(.aurora){animation:rise .8s cubic-bezier(.2,.7,.2,1) both}
+  .hero > :nth-child(2){animation-delay:.05s}.hero > :nth-child(3){animation-delay:.15s}
+  .hero > :nth-child(4){animation-delay:.25s}.hero > :nth-child(5){animation-delay:.35s}.hero > :nth-child(6){animation-delay:.45s}
+  .hero h1 em{animation:underline .9s .9s cubic-bezier(.2,.7,.2,1) forwards}
+  .aurora span:nth-child(1){animation:drift1 16s ease-in-out infinite alternate}
+  .aurora span:nth-child(2){animation:drift2 19s ease-in-out infinite alternate}
+  .aurora span:nth-child(3){animation:drift3 22s ease-in-out infinite alternate}
+  .logo i{animation:beacon 2.8s ease-out infinite}
+  .live::before{animation:blink 1.6s ease-in-out infinite}
+  .browser:hover{transform:translateY(-4px);box-shadow:0 28px 50px -26px rgba(10,20,15,.45)}
+  .bump{animation:bump .35s ease}
+  .pop{animation:pop .3s ease}
+  .views button{transition:background .2s,color .2s}
+  .screen:not([hidden]){animation:fadein .35s ease}
+}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes underline{to{background-size:100% .09em}}
+@keyframes drift1{to{transform:translate(-12%,10%) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-20%,-8%) scale(.9)}}
+@keyframes drift3{to{transform:translate(16%,-12%) scale(1.1)}}
+@keyframes beacon{0%{box-shadow:0 0 0 0 var(--aurora-a)}70%{box-shadow:0 0 0 10px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes blink{50%{opacity:.35}}
+@keyframes bump{40%{transform:scale(1.15)}}
+@keyframes pop{50%{transform:scale(1.06)}}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.hero h1 em{background-size:100% .09em}.reveal.pre{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -228,6 +273,7 @@ footer{padding-block:28px;color:var(--muted);font-size:14px}
   </header>
 
   <section class="hero">
+    <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
     <span class="eyebrow">Diseño y desarrollo web para negocios</span>
     <h1>Que te encuentren en Google y te <em>escriban</em> hoy.</h1>
     <p>Desarrollo web a medida, con front end y back end propios: tu página tiene su propio sistema de turnos, pedidos o consultas, y un panel para manejarlo. Te la entregamos online y funcionando.</p>
@@ -523,6 +569,36 @@ footer{padding-block:28px;color:var(--muted);font-size:14px}
   go.onclick=function(){order={};drawO();m4.textContent='Pedido enviado a la cocina. Retiralo en 30 minutos (demo).'};
   document.getElementById('d4res').onclick=function(){var n=document.getElementById('d4name').value.trim()||'tu nombre';document.getElementById('d4resmsg').textContent='Mesa para '+document.getElementById('d4ppl').value+' reservada el '+document.getElementById('d4day').value.toLowerCase()+' a las '+document.getElementById('d4hour').value+' a nombre de '+n+' (demo).'};
   drawT();drawM();
+
+  // ---- Animaciones ----
+  var calm=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function bump(el,c){if(!el)return;el.classList.remove(c);void el.offsetWidth;el.classList.add(c)}
+  // Carrito, pedido y confirmaciones con un pequeño rebote
+  pEl.addEventListener('click',function(e){if(e.target.classList.contains('add'))bump(cart,'bump')});
+  mEl.addEventListener('click',function(e){if(e.target.tagName==='BUTTON')bump(tot,'bump')});
+  [m1,m4,document.getElementById('d4resmsg')].forEach(function(m){new MutationObserver(function(){if(m.textContent)bump(m,'pop')}).observe(m,{childList:true,characterData:true,subtree:true})});
+  // Indicador "En vivo" en cada panel
+  document.querySelectorAll('.admin aside').forEach(function(a){var s=document.createElement('span');s.className='live';s.textContent='En vivo';a.appendChild(s)});
+  // Números del panel que cuentan al abrirlo
+  function countUp(pane){if(calm)return;pane.querySelectorAll('.ad-kpi b').forEach(function(b){
+    var orig=b.dataset.v||(b.dataset.v=b.textContent),m=orig.match(/[\d.]+/);if(!m)return;
+    var target=parseInt(m[0].replace(/\./g,''),10),t0=null;
+    function step(ts){if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/700),v=Math.round(target*(1-Math.pow(1-p,3)));
+      b.textContent=orig.replace(m[0],v.toLocaleString('es-AR'));if(p<1)requestAnimationFrame(step);else b.textContent=orig}
+    requestAnimationFrame(step)})}
+  document.querySelectorAll('[data-views] button').forEach(function(b){b.addEventListener('click',function(){
+    if(b.dataset.view==='admin')countUp(document.querySelector('[data-pane="'+b.parentNode.dataset.views+'-admin"]'))})});
+  // Aparición suave al hacer scroll (solo lo que está fuera de pantalla al cargar)
+  if(!calm){
+    var pending=[];
+    document.querySelectorAll('.block-head,.project,.plan,.step,.contact').forEach(function(el){
+      el.classList.add('reveal');if(el.getBoundingClientRect().top>innerHeight*0.92){el.classList.add('pre');
+        if(el.classList.contains('plan')||el.classList.contains('step'))el.style.transitionDelay=(Array.prototype.indexOf.call(el.parentNode.children,el)*90)+'ms';
+        pending.push(el)}});
+    var check=function(){pending=pending.filter(function(el){if(el.getBoundingClientRect().top<innerHeight*0.9){el.classList.remove('pre');return false}return true});
+      if(!pending.length)removeEventListener('scroll',check)};
+    addEventListener('scroll',check,{passive:true});addEventListener('resize',check);
+  }
 
   // Copiar mail
   document.getElementById('copyBtn').addEventListener('click',function(){var b=this,t=document.getElementById('mail').textContent;
